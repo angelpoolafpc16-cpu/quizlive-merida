@@ -7,6 +7,7 @@ import Timer from '../components/Timer.jsx';
 import Leaderboard from '../components/Leaderboard.jsx';
 import Logo from '../components/Logo.jsx';
 import Header from '../components/Header.jsx';
+import SocialFollow from '../components/SocialFollow.jsx';
 
 const OPTION_COLORS = ['var(--opt-0)', 'var(--opt-1)', 'var(--opt-2)', 'var(--opt-3)'];
 const OPTION_TEXT = ['#ffffff', '#0f2f66', '#ffffff', '#0f2f66'];
@@ -90,7 +91,16 @@ export default function HostGame() {
                 <p className="subtitle">Código de sala</p>
               </div>
               <div style={{ background: '#fff', padding: 12, borderRadius: 16, boxShadow: 'var(--shadow)' }}>
-                <QRCodeSVG value={joinUrl} size={150} fgColor="#0f2f66" />
+                <QRCodeSVG
+                  value={joinUrl}
+                  size={150}
+                  fgColor="#0f2f66"
+                  level="H"
+                  imageSettings={{ src: '/logo-merida.svg', height: 30, width: 30, excavate: true }}
+                />
+                <p className="subtitle" style={{ margin: '8px 0 0', fontSize: '0.8rem' }}>
+                  Escanea para unirte
+                </p>
               </div>
             </div>
             <div className="row" style={{ marginBottom: 12 }}>
@@ -179,7 +189,8 @@ export default function HostGame() {
           <motion.div {...fade} key="final" style={{ textAlign: 'center' }}>
             <h1 className="title-xl">🏆 Resultados finales</h1>
             <Leaderboard entries={finalBoard} />
-            <button className="btn btn-outline" onClick={() => navigate('/')} style={{ marginTop: 24, maxWidth: 280 }}>
+            <SocialFollow />
+            <button className="btn btn-outline" onClick={() => navigate('/')} style={{ marginTop: 12, maxWidth: 280 }}>
               Volver al inicio
             </button>
           </motion.div>

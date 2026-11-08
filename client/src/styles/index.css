@@ -372,6 +372,7 @@ textarea.input {
   align-items: center;
   justify-content: center;
   background: var(--color-primary);
+  pointer-events: none;
 }
 
 .splash-logo {

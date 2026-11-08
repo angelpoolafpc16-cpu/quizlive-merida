@@ -5,6 +5,7 @@ import { socket } from '../socket.js';
 import { useGame } from '../context/GameContext.jsx';
 import Timer from '../components/Timer.jsx';
 import Header from '../components/Header.jsx';
+import SocialFollow from '../components/SocialFollow.jsx';
 
 const OPTION_COLORS = ['var(--opt-0)', 'var(--opt-1)', 'var(--opt-2)', 'var(--opt-3)'];
 const OPTION_TEXT = ['#ffffff', '#0f2f66', '#ffffff', '#0f2f66'];
@@ -144,6 +145,7 @@ export default function PlayerGame() {
                 Quedaste #{myRank + 1} con {finalBoard[myRank].score} pts
               </p>
             )}
+            <SocialFollow />
           </motion.div>
         )}
       </AnimatePresence>
