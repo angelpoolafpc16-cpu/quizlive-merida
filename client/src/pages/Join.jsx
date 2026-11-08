@@ -1,8 +1,9 @@
 import { useState } from 'react';
-import { useParams, useNavigate, Link } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { socket } from '../socket.js';
 import { useGame } from '../context/GameContext.jsx';
+import Header from '../components/Header.jsx';
 
 export default function Join() {
   const { code: codeFromUrl } = useParams();
@@ -33,11 +34,7 @@ export default function Join() {
 
   return (
     <div className="screen">
-      <div className="topbar">
-        <Link to="/" className="link-back">
-          ← Inicio
-        </Link>
-      </div>
+      <Header backTo="/" />
       <motion.form
         initial={{ opacity: 0, y: 16 }}
         animate={{ opacity: 1, y: 0 }}

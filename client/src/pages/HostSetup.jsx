@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { socket } from '../socket.js';
 import { useGame } from '../context/GameContext.jsx';
+import Header from '../components/Header.jsx';
 
 export default function HostSetup() {
   const [quizzes, setQuizzes] = useState([]);
@@ -33,11 +34,7 @@ export default function HostSetup() {
 
   return (
     <div className="screen">
-      <div className="topbar">
-        <Link to="/" className="link-back">
-          ← Inicio
-        </Link>
-      </div>
+      <Header backTo="/" />
       <div className="card">
         <h1 className="title-xl" style={{ fontSize: '1.8rem' }}>
           Elige un quiz

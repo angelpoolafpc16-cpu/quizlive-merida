@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
+import Header from '../components/Header.jsx';
 
 const emptyQuestion = () => ({
   text: '',
@@ -99,13 +99,9 @@ export default function Admin() {
 
   return (
     <div className="screen" style={{ alignItems: 'stretch', justifyContent: 'flex-start' }}>
-      <div className="topbar">
-        <Link to="/" className="link-back">
-          ← Inicio
-        </Link>
-      </div>
+      <Header backTo="/" />
 
-      <div style={{ maxWidth: 760, width: '100%', margin: '80px auto 40px' }}>
+      <div style={{ maxWidth: 760, width: '100%', margin: '0 auto 40px' }}>
         <h1 className="title-xl" style={{ fontSize: '2rem' }}>
           Preguntas
         </h1>

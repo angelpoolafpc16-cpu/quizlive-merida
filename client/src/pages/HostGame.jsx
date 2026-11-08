@@ -1,11 +1,12 @@
 import { useEffect, useState } from 'react';
-import { useParams, useNavigate, Link } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { QRCodeSVG } from 'qrcode.react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { socket } from '../socket.js';
 import Timer from '../components/Timer.jsx';
 import Leaderboard from '../components/Leaderboard.jsx';
 import Logo from '../components/Logo.jsx';
+import Header from '../components/Header.jsx';
 
 const OPTION_COLORS = ['var(--opt-0)', 'var(--opt-1)', 'var(--opt-2)', 'var(--opt-3)'];
 const OPTION_TEXT = ['#ffffff', '#0f2f66', '#ffffff', '#0f2f66'];
@@ -76,11 +77,7 @@ export default function HostGame() {
 
   return (
     <div className="screen">
-      <div className="topbar">
-        <Link to="/" className="link-back">
-          ← Salir
-        </Link>
-      </div>
+      <Header backTo="/" backLabel="← Salir" />
 
       <AnimatePresence mode="wait">
         {phase === 'lobby' && (
