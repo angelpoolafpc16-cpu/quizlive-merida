@@ -6,7 +6,7 @@ import { existsSync } from 'fs';
 import { fileURLToPath } from 'url';
 import { customAlphabet } from 'nanoid';
 import { randomUUID } from 'crypto';
-import { loadQuizzes, saveQuizzes } from './store.js';
+import { loadQuizzes, saveQuizzes, seedIfEmpty } from './store.js';
 import { createGameManager } from './gameManager.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -64,4 +64,6 @@ if (existsSync(clientDist)) {
 }
 
 const PORT = process.env.PORT || 4000;
-server.listen(PORT, () => console.log(`Servidor escuchando en puerto ${PORT}`));
+seedIfEmpty().then(() => {
+  server.listen(PORT, () => console.log(`Servidor escuchando en puerto ${PORT}`));
+});

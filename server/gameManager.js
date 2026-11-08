@@ -14,6 +14,15 @@ function serializePlayers(room) {
   return [...room.players.values()].map((p) => ({ id: p.id, name: p.name, score: p.score }));
 }
 
+function shuffled(array) {
+  const result = [...array];
+  for (let i = result.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [result[i], result[j]] = [result[j], result[i]];
+  }
+  return result;
+}
+
 export function createGameManager(io, generateCode) {
   const rooms = new Map();
 
@@ -129,6 +138,7 @@ export function createGameManager(io, generateCode) {
       const room = rooms.get(socket.data.roomCode);
       if (!room || socket.id !== room.hostSocketId) return;
       if (room.players.size === 0) return;
+      room.quiz = { ...room.quiz, questions: shuffled(room.quiz.questions) };
       startQuestion(room, 0);
     });
 
