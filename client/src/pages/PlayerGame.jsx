@@ -6,11 +6,11 @@ import { useGame } from '../context/GameContext.jsx';
 import Timer from '../components/Timer.jsx';
 import Header from '../components/Header.jsx';
 import SocialFollow from '../components/SocialFollow.jsx';
+import { cardVariants, optionContainerVariants, optionItemVariants } from '../motion.js';
 
 const OPTION_COLORS = ['var(--opt-0)', 'var(--opt-1)', 'var(--opt-2)', 'var(--opt-3)'];
 const OPTION_TEXT = ['#ffffff', '#0f2f66', '#ffffff', '#0f2f66'];
 const OPTION_SHAPES = ['shape-triangle', 'shape-diamond', 'shape-circle', 'shape-square'];
-const fade = { initial: { opacity: 0, y: 12 }, animate: { opacity: 1, y: 0 }, exit: { opacity: 0, y: -12 } };
 
 export default function PlayerGame() {
   const navigate = useNavigate();
@@ -73,23 +73,39 @@ export default function PlayerGame() {
       <Header />
       <AnimatePresence mode="wait">
         {phase === 'waiting' && (
-          <motion.div {...fade} key="waiting" className="card" style={{ textAlign: 'center' }}>
+          <motion.div
+            variants={cardVariants}
+            initial="initial"
+            animate="animate"
+            exit="exit"
+            key="waiting"
+            className="card"
+            style={{ textAlign: 'center' }}
+          >
             <h2>¡Hola, {playerName}! 👋</h2>
             <p className="subtitle">Estás dentro. Espera a que el anfitrión inicie el juego…</p>
           </motion.div>
         )}
 
         {phase === 'question' && question && (
-          <motion.div {...fade} key={`q-${question.index}`} style={{ width: '100%', maxWidth: 420 }}>
+          <motion.div
+            variants={cardVariants}
+            initial="initial"
+            animate="animate"
+            exit="exit"
+            key={`q-${question.index}`}
+            style={{ width: '100%', maxWidth: 420 }}
+          >
             <p className="subtitle" style={{ textAlign: 'center' }}>
               Pregunta {question.index + 1} de {question.total}
             </p>
             <h2 style={{ textAlign: 'center' }}>{question.text}</h2>
             <Timer duration={question.duration} questionIndex={question.index} />
-            <div className="stack">
+            <motion.div variants={optionContainerVariants} initial="initial" animate="animate" className="stack">
               {question.options.map((opt, i) => (
-                <button
+                <motion.button
                   key={i}
+                  variants={optionItemVariants}
                   className="option-btn"
                   style={{
                     background: OPTION_COLORS[i],
@@ -99,15 +115,16 @@ export default function PlayerGame() {
                   }}
                   disabled={selected !== null}
                   onClick={() => answer(i)}
+                  whileTap={{ scale: 0.95 }}
                 >
                   <span
                     className={`option-shape ${OPTION_SHAPES[i]}`}
                     style={{ background: OPTION_TEXT[i], borderBottomColor: OPTION_TEXT[i] }}
                   />
                   {opt}
-                </button>
+                </motion.button>
               ))}
-            </div>
+            </motion.div>
             {selected !== null && (
               <p className="subtitle" style={{ textAlign: 'center', marginTop: 12 }}>
                 Respuesta enviada. Esperando a los demás…
@@ -118,7 +135,10 @@ export default function PlayerGame() {
 
         {phase === 'result' && result && (
           <motion.div
-            {...fade}
+            variants={cardVariants}
+            initial="initial"
+            animate="animate"
+            exit="exit"
             key="result"
             className="card"
             style={{ textAlign: 'center' }}
@@ -138,7 +158,15 @@ export default function PlayerGame() {
         )}
 
         {phase === 'final' && finalBoard && (
-          <motion.div {...fade} key="final" className="card" style={{ textAlign: 'center' }}>
+          <motion.div
+            variants={cardVariants}
+            initial="initial"
+            animate="animate"
+            exit="exit"
+            key="final"
+            className="card"
+            style={{ textAlign: 'center' }}
+          >
             <h1 className="title-xl">🏁 ¡Juego terminado!</h1>
             {myRank >= 0 && (
               <p style={{ fontSize: '1.4rem', fontWeight: 700 }}>

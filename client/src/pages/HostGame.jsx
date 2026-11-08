@@ -8,11 +8,11 @@ import Leaderboard from '../components/Leaderboard.jsx';
 import Logo from '../components/Logo.jsx';
 import Header from '../components/Header.jsx';
 import SocialFollow from '../components/SocialFollow.jsx';
+import { cardVariants, optionContainerVariants, optionItemVariants } from '../motion.js';
 
 const OPTION_COLORS = ['var(--opt-0)', 'var(--opt-1)', 'var(--opt-2)', 'var(--opt-3)'];
 const OPTION_TEXT = ['#ffffff', '#0f2f66', '#ffffff', '#0f2f66'];
 const OPTION_SHAPES = ['shape-triangle', 'shape-diamond', 'shape-circle', 'shape-square'];
-const fade = { initial: { opacity: 0, y: 12 }, animate: { opacity: 1, y: 0 }, exit: { opacity: 0, y: -12 } };
 
 export default function HostGame() {
   const { code } = useParams();
@@ -82,8 +82,18 @@ export default function HostGame() {
 
       <AnimatePresence mode="wait">
         {phase === 'lobby' && (
-          <motion.div {...fade} key="lobby" className="card" style={{ textAlign: 'center', maxWidth: 640 }}>
-            <Logo size={64} />
+          <motion.div
+            variants={cardVariants}
+            initial="initial"
+            animate="animate"
+            exit="exit"
+            key="lobby"
+            className="card"
+            style={{ textAlign: 'center', maxWidth: 640 }}
+          >
+            <div className="logo-badge">
+              <Logo size={48} />
+            </div>
             <h2 style={{ marginTop: 12 }}>Únete desde tu teléfono</h2>
             <div className="row" style={{ justifyContent: 'center', gap: 32, margin: '20px 0' }}>
               <div>
@@ -107,8 +117,9 @@ export default function HostGame() {
               {players.map((p) => (
                 <motion.span
                   key={p.id}
-                  initial={{ scale: 0.6, opacity: 0 }}
+                  initial={{ scale: 0.4, opacity: 0 }}
                   animate={{ scale: 1, opacity: 1 }}
+                  transition={{ type: 'spring', stiffness: 400, damping: 14 }}
                   className="player-chip"
                 >
                   {p.name}
@@ -125,7 +136,10 @@ export default function HostGame() {
 
         {phase === 'question' && question && (
           <motion.div
-            {...fade}
+            variants={cardVariants}
+            initial="initial"
+            animate="animate"
+            exit="exit"
             key={`q-${question.index}`}
             style={{ width: '100%', maxWidth: 820, textAlign: 'center' }}
           >
@@ -137,10 +151,17 @@ export default function HostGame() {
             <p className="subtitle">
               {progress.answered}/{progress.total} respondieron
             </p>
-            <div className="options-grid" style={{ margin: '16px auto 0' }}>
+            <motion.div
+              variants={optionContainerVariants}
+              initial="initial"
+              animate="animate"
+              className="options-grid"
+              style={{ margin: '16px auto 0' }}
+            >
               {question.options.map((opt, i) => (
-                <div
+                <motion.div
                   key={i}
+                  variants={optionItemVariants}
                   className="option-btn"
                   style={{ background: OPTION_COLORS[i], color: OPTION_TEXT[i] }}
                 >
@@ -149,19 +170,33 @@ export default function HostGame() {
                     style={{ background: OPTION_TEXT[i], borderBottomColor: OPTION_TEXT[i] }}
                   />
                   {opt}
-                </div>
+                </motion.div>
               ))}
-            </div>
+            </motion.div>
           </motion.div>
         )}
 
         {phase === 'reveal' && results && (
-          <motion.div {...fade} key={`r-${results.index}`} style={{ width: '100%', maxWidth: 820, textAlign: 'center' }}>
+          <motion.div
+            variants={cardVariants}
+            initial="initial"
+            animate="animate"
+            exit="exit"
+            key={`r-${results.index}`}
+            style={{ width: '100%', maxWidth: 820, textAlign: 'center' }}
+          >
             <h2 style={{ marginTop: 0 }}>Respuesta correcta</h2>
-            <div className="options-grid" style={{ margin: '0 auto 28px' }}>
+            <motion.div
+              variants={optionContainerVariants}
+              initial="initial"
+              animate="animate"
+              className="options-grid"
+              style={{ margin: '0 auto 28px' }}
+            >
               {results.options.map((opt, i) => (
-                <div
+                <motion.div
                   key={i}
+                  variants={optionItemVariants}
                   className="option-btn"
                   style={{
                     background: OPTION_COLORS[i],
@@ -174,9 +209,9 @@ export default function HostGame() {
                     style={{ background: OPTION_TEXT[i], borderBottomColor: OPTION_TEXT[i] }}
                   />
                   {opt} · {results.distribution[i]}
-                </div>
+                </motion.div>
               ))}
-            </div>
+            </motion.div>
             <h3>Marcador</h3>
             <Leaderboard entries={results.leaderboard} />
             <button className="btn btn-primary" onClick={next} style={{ marginTop: 24, maxWidth: 280 }}>
@@ -186,7 +221,14 @@ export default function HostGame() {
         )}
 
         {phase === 'final' && finalBoard && (
-          <motion.div {...fade} key="final" style={{ textAlign: 'center' }}>
+          <motion.div
+            variants={cardVariants}
+            initial="initial"
+            animate="animate"
+            exit="exit"
+            key="final"
+            style={{ textAlign: 'center' }}
+          >
             <h1 className="title-xl">🏆 Resultados finales</h1>
             <Leaderboard entries={finalBoard} />
             <SocialFollow />

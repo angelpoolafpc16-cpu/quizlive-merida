@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Header from '../components/Header.jsx';
+import { popVariants } from '../motion.js';
 
 const emptyQuestion = () => ({
   text: '',
@@ -113,9 +114,13 @@ export default function Admin() {
             </button>
             <div className="stack">
               {quizzes.length === 0 && <p className="subtitle">Aún no tienes quizzes creados.</p>}
-              {quizzes.map((q) => (
-                <div
+              {quizzes.map((q, i) => (
+                <motion.div
                   key={q.id}
+                  variants={popVariants}
+                  initial="initial"
+                  animate="animate"
+                  transition={{ delay: i * 0.05 }}
                   className="card"
                   style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', maxWidth: 'none' }}
                 >
@@ -137,7 +142,7 @@ export default function Admin() {
                       Eliminar
                     </button>
                   </div>
-                </div>
+                </motion.div>
               ))}
             </div>
           </>

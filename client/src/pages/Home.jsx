@@ -1,6 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import Header from '../components/Header.jsx';
+import { cardVariants } from '../motion.js';
 
 export default function Home() {
   const navigate = useNavigate();
@@ -9,9 +10,9 @@ export default function Home() {
     <div className="screen">
       <Header />
       <motion.div
-        initial={{ opacity: 0, y: 16 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4 }}
+        variants={cardVariants}
+        initial="initial"
+        animate="animate"
         className="card"
         style={{ textAlign: 'center' }}
       >

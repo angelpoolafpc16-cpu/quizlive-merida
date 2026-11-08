@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import { socket } from '../socket.js';
 import { useGame } from '../context/GameContext.jsx';
 import Header from '../components/Header.jsx';
+import { cardVariants } from '../motion.js';
 
 export default function Join() {
   const { code: codeFromUrl } = useParams();
@@ -36,8 +37,9 @@ export default function Join() {
     <div className="screen">
       <Header backTo="/" />
       <motion.form
-        initial={{ opacity: 0, y: 16 }}
-        animate={{ opacity: 1, y: 0 }}
+        variants={cardVariants}
+        initial="initial"
+        animate="animate"
         onSubmit={submit}
         className="card stack"
       >

@@ -92,6 +92,16 @@ button {
   background: rgba(255, 255, 255, 0.25);
 }
 
+.logo-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-primary);
+  border-radius: var(--radius-lg);
+  padding: 16px;
+  box-shadow: var(--shadow);
+}
+
 .app-header-title {
   color: #fff;
   font-weight: 800;
