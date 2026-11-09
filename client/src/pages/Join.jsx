@@ -9,7 +9,7 @@ import { cardVariants } from '../motion.js';
 export default function Join() {
   const { code: codeFromUrl } = useParams();
   const navigate = useNavigate();
-  const { setCode, setPlayerName } = useGame();
+  const { setCode, setPlayerName, playerId } = useGame();
   const [code, setLocalCode] = useState(codeFromUrl || '');
   const [name, setName] = useState('');
   const [error, setError] = useState('');
@@ -21,7 +21,7 @@ export default function Join() {
     setJoining(true);
     setError('');
     if (!socket.connected) socket.connect();
-    socket.emit('player:join', { code: code.trim().toUpperCase(), name: name.trim() }, (res) => {
+    socket.emit('player:join', { code: code.trim().toUpperCase(), name: name.trim(), playerId }, (res) => {
       setJoining(false);
       if (res?.error) {
         setError(res.error);

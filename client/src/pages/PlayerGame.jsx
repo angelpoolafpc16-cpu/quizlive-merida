@@ -14,7 +14,7 @@ const OPTION_SHAPES = ['shape-triangle', 'shape-diamond', 'shape-circle', 'shape
 
 export default function PlayerGame() {
   const navigate = useNavigate();
-  const { playerName, code } = useGame();
+  const { playerName, code, playerId } = useGame();
   const [phase, setPhase] = useState('waiting');
   const [question, setQuestion] = useState(null);
   const [selected, setSelected] = useState(null);
@@ -46,19 +46,39 @@ export default function PlayerGame() {
     function onHostLeft() {
       navigate('/');
     }
+    function onConnect() {
+      if (!code || !playerId) return;
+      socket.emit('player:rejoin', { code, playerId }, (res) => {
+        if (!res?.ok) return;
+        if (res.phase === 'question' && res.question) {
+          setQuestion(res.question);
+          setSelected(res.answered ? -1 : null);
+          setResult(null);
+          setPhase('question');
+        } else if (res.phase === 'reveal' && res.result) {
+          setResult(res.result);
+          setPhase('result');
+        } else if (res.phase === 'final' && res.final) {
+          setFinalBoard(res.final.leaderboard);
+          setPhase('final');
+        }
+      });
+    }
 
     socket.on('game:question', onQuestion);
     socket.on('player:result', onResult);
     socket.on('game:final', onFinal);
     socket.on('game:hostLeft', onHostLeft);
+    socket.on('connect', onConnect);
 
     return () => {
       socket.off('game:question', onQuestion);
       socket.off('player:result', onResult);
       socket.off('game:final', onFinal);
       socket.off('game:hostLeft', onHostLeft);
+      socket.off('connect', onConnect);
     };
-  }, [navigate]);
+  }, [navigate, code, playerId]);
 
   function answer(optionIndex) {
     if (selected !== null) return;
@@ -71,13 +91,12 @@ export default function PlayerGame() {
   return (
     <div className="screen">
       <Header />
-      <AnimatePresence mode="wait">
+      <AnimatePresence>
         {phase === 'waiting' && (
           <motion.div
             variants={cardVariants}
             initial="initial"
             animate="animate"
-            exit="exit"
             key="waiting"
             className="card"
             style={{ textAlign: 'center' }}
@@ -92,7 +111,6 @@ export default function PlayerGame() {
             variants={cardVariants}
             initial="initial"
             animate="animate"
-            exit="exit"
             key={`q-${question.index}`}
             style={{ width: '100%', maxWidth: 420 }}
           >
@@ -138,7 +156,6 @@ export default function PlayerGame() {
             variants={cardVariants}
             initial="initial"
             animate="animate"
-            exit="exit"
             key="result"
             className="card"
             style={{ textAlign: 'center' }}
@@ -162,7 +179,6 @@ export default function PlayerGame() {
             variants={cardVariants}
             initial="initial"
             animate="animate"
-            exit="exit"
             key="final"
             className="card"
             style={{ textAlign: 'center' }}

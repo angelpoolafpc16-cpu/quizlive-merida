@@ -7,6 +7,7 @@ import HostSetup from './pages/HostSetup.jsx';
 import HostGame from './pages/HostGame.jsx';
 import Join from './pages/Join.jsx';
 import PlayerGame from './pages/PlayerGame.jsx';
+import AdminGate from './components/AdminGate.jsx';
 
 export default function App() {
   const [showSplash, setShowSplash] = useState(true);
@@ -34,8 +35,22 @@ export default function App() {
       </AnimatePresence>
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/admin" element={<Admin />} />
-        <Route path="/host" element={<HostSetup />} />
+        <Route
+          path="/admin"
+          element={
+            <AdminGate>
+              <Admin />
+            </AdminGate>
+          }
+        />
+        <Route
+          path="/host"
+          element={
+            <AdminGate>
+              <HostSetup />
+            </AdminGate>
+          }
+        />
         <Route path="/host/:code" element={<HostGame />} />
         <Route path="/join" element={<Join />} />
         <Route path="/join/:code" element={<Join />} />

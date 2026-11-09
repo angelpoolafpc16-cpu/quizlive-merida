@@ -11,11 +11,17 @@ export default function HostSetup() {
   const [error, setError] = useState('');
   const [creating, setCreating] = useState(false);
   const navigate = useNavigate();
-  const { setQuizMeta } = useGame();
+  const { setQuizMeta, setHostToken, adminToken, setAdminToken } = useGame();
 
   useEffect(() => {
-    fetch('/api/quizzes')
-      .then((r) => r.json())
+    fetch('/api/quizzes', { headers: { Authorization: `Bearer ${adminToken}` } })
+      .then((r) => {
+        if (r.status === 401) {
+          setAdminToken('');
+          return [];
+        }
+        return r.json();
+      })
       .then(setQuizzes);
   }, []);
 
@@ -23,13 +29,14 @@ export default function HostSetup() {
     setCreating(true);
     setError('');
     if (!socket.connected) socket.connect();
-    socket.emit('host:createRoom', { quizId }, (res) => {
+    socket.emit('host:createRoom', { quizId, adminToken }, (res) => {
       setCreating(false);
       if (res?.error) {
         setError(res.error);
         return;
       }
       setQuizMeta({ quizTitle: res.quizTitle, totalQuestions: res.totalQuestions });
+      setHostToken(res.hostToken);
       navigate(`/host/${res.code}`);
     });
   }

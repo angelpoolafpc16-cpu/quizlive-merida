@@ -9,6 +9,7 @@ import Logo from '../components/Logo.jsx';
 import Header from '../components/Header.jsx';
 import SocialFollow from '../components/SocialFollow.jsx';
 import { cardVariants, optionContainerVariants, optionItemVariants } from '../motion.js';
+import { useGame } from '../context/GameContext.jsx';
 
 const OPTION_COLORS = ['var(--opt-0)', 'var(--opt-1)', 'var(--opt-2)', 'var(--opt-3)'];
 const OPTION_TEXT = ['#ffffff', '#0f2f66', '#ffffff', '#0f2f66'];
@@ -17,6 +18,7 @@ const OPTION_SHAPES = ['shape-triangle', 'shape-diamond', 'shape-circle', 'shape
 export default function HostGame() {
   const { code } = useParams();
   const navigate = useNavigate();
+  const { hostToken } = useGame();
   const [players, setPlayers] = useState([]);
   const [phase, setPhase] = useState('lobby');
   const [question, setQuestion] = useState(null);
@@ -35,6 +37,7 @@ export default function HostGame() {
     function onQuestion(q) {
       setQuestion(q);
       setResults(null);
+      setProgress((p) => ({ answered: 0, total: p.total }));
       setPhase('question');
     }
     function onResults(r) {
@@ -48,6 +51,18 @@ export default function HostGame() {
     function onHostLeft() {
       navigate('/');
     }
+    function onConnect() {
+      if (!code || !hostToken) return;
+      socket.emit('host:rejoin', { code, hostToken }, (res) => {
+        if (!res?.ok) return;
+        setPlayers(res.players);
+        setProgress((p) => ({ ...p, total: res.players.length }));
+        setPhase(res.phase);
+        if (res.question) setQuestion(res.question);
+        if (res.results) setResults(res.results);
+        if (res.final) setFinalBoard(res.final.leaderboard);
+      });
+    }
 
     socket.on('host:playerList', onPlayerList);
     socket.on('host:answerProgress', onAnswerProgress);
@@ -55,6 +70,7 @@ export default function HostGame() {
     socket.on('host:questionResults', onResults);
     socket.on('game:final', onFinal);
     socket.on('game:hostLeft', onHostLeft);
+    socket.on('connect', onConnect);
 
     return () => {
       socket.off('host:playerList', onPlayerList);
@@ -63,8 +79,9 @@ export default function HostGame() {
       socket.off('host:questionResults', onResults);
       socket.off('game:final', onFinal);
       socket.off('game:hostLeft', onHostLeft);
+      socket.off('connect', onConnect);
     };
-  }, [navigate]);
+  }, [navigate, code, hostToken]);
 
   const joinUrl = `${window.location.origin}/join/${code}`;
   const isLast = question && results && question.index + 1 >= question.total;
@@ -80,13 +97,12 @@ export default function HostGame() {
     <div className="screen">
       <Header backTo="/" backLabel="← Salir" />
 
-      <AnimatePresence mode="wait">
+      <AnimatePresence>
         {phase === 'lobby' && (
           <motion.div
             variants={cardVariants}
             initial="initial"
             animate="animate"
-            exit="exit"
             key="lobby"
             className="card"
             style={{ textAlign: 'center', maxWidth: 640 }}
@@ -113,6 +129,9 @@ export default function HostGame() {
                 </p>
               </div>
             </div>
+            <p className="subtitle" style={{ marginTop: -8, marginBottom: 20, fontSize: '0.85rem' }}>
+              Entra en <strong>{window.location.host}</strong> y escribe el código
+            </p>
             <div className="row" style={{ marginBottom: 12 }}>
               {players.map((p) => (
                 <motion.span
@@ -139,7 +158,6 @@ export default function HostGame() {
             variants={cardVariants}
             initial="initial"
             animate="animate"
-            exit="exit"
             key={`q-${question.index}`}
             style={{ width: '100%', maxWidth: 820, textAlign: 'center' }}
           >
@@ -181,7 +199,6 @@ export default function HostGame() {
             variants={cardVariants}
             initial="initial"
             animate="animate"
-            exit="exit"
             key={`r-${results.index}`}
             style={{ width: '100%', maxWidth: 820, textAlign: 'center' }}
           >
@@ -225,7 +242,6 @@ export default function HostGame() {
             variants={cardVariants}
             initial="initial"
             animate="animate"
-            exit="exit"
             key="final"
             style={{ textAlign: 'center' }}
           >

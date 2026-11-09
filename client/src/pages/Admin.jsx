@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Header from '../components/Header.jsx';
 import { popVariants } from '../motion.js';
+import { useGame } from '../context/GameContext.jsx';
 
 const emptyQuestion = () => ({
   text: '',
@@ -11,15 +12,29 @@ const emptyQuestion = () => ({
 });
 
 export default function Admin() {
+  const { adminToken, setAdminToken } = useGame();
   const [quizzes, setQuizzes] = useState([]);
   const [editing, setEditing] = useState(null); // quiz being edited, or null
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
 
+  async function authFetch(url, options = {}) {
+    const res = await fetch(url, {
+      ...options,
+      headers: { ...options.headers, Authorization: `Bearer ${adminToken}` },
+    });
+    if (res.status === 401) {
+      setAdminToken('');
+      throw new Error('Sesión expirada');
+    }
+    return res;
+  }
+
   const refresh = () =>
-    fetch('/api/quizzes')
+    authFetch('/api/quizzes')
       .then((r) => r.json())
-      .then(setQuizzes);
+      .then(setQuizzes)
+      .catch(() => {});
 
   useEffect(() => {
     refresh();
@@ -37,7 +52,7 @@ export default function Admin() {
 
   async function deleteQuiz(id) {
     if (!confirm('¿Eliminar este quiz?')) return;
-    await fetch(`/api/quizzes/${id}`, { method: 'DELETE' });
+    await authFetch(`/api/quizzes/${id}`, { method: 'DELETE' }).catch(() => {});
     refresh();
   }
 
@@ -88,14 +103,19 @@ export default function Admin() {
     setError('');
     const method = editing.id ? 'PUT' : 'POST';
     const url = editing.id ? `/api/quizzes/${editing.id}` : '/api/quizzes';
-    await fetch(url, {
-      method,
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(editing),
-    });
-    setSaving(false);
-    setEditing(null);
-    refresh();
+    try {
+      await authFetch(url, {
+        method,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(editing),
+      });
+      setEditing(null);
+      refresh();
+    } catch {
+      setError('Sesión expirada, vuelve a iniciar sesión');
+    } finally {
+      setSaving(false);
+    }
   }
 
   return (
