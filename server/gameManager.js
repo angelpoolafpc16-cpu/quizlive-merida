@@ -92,6 +92,7 @@ export function createGameManager(io, generateCode, adminTokens) {
         pointsAwarded: a ? a.points : 0,
         totalScore: player.score,
         correctIndex: question.correctIndex,
+        correctText: question.options[question.correctIndex],
       };
       player.lastResult = payload;
       if (player.socketId) io.to(player.socketId).emit('player:result', payload);

@@ -170,6 +170,11 @@ export default function PlayerGame() {
             ) : (
               <h1 style={{ fontSize: '1.6rem' }}>⏱️ No respondiste a tiempo</h1>
             )}
+            {!result.correct && result.correctText && (
+              <p className="subtitle" style={{ fontSize: '1.1rem', fontWeight: 600 }}>
+                La respuesta correcta era: <strong>{result.correctText}</strong>
+              </p>
+            )}
             <p style={{ fontWeight: 700, fontSize: '1.3rem' }}>Puntaje total: {result.totalScore}</p>
           </motion.div>
         )}

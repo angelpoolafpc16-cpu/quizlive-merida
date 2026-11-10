@@ -204,30 +204,25 @@ export default function HostGame() {
           >
             <h2 style={{ marginTop: 0 }}>Respuesta correcta</h2>
             <motion.div
-              variants={optionContainerVariants}
+              variants={optionItemVariants}
               initial="initial"
               animate="animate"
-              className="options-grid"
-              style={{ margin: '0 auto 28px' }}
+              className="option-btn"
+              style={{
+                background: OPTION_COLORS[results.correctIndex],
+                color: OPTION_TEXT[results.correctIndex],
+                maxWidth: 480,
+                margin: '0 auto 28px',
+              }}
             >
-              {results.options.map((opt, i) => (
-                <motion.div
-                  key={i}
-                  variants={optionItemVariants}
-                  className="option-btn"
-                  style={{
-                    background: OPTION_COLORS[i],
-                    color: OPTION_TEXT[i],
-                    opacity: i === results.correctIndex ? 1 : 0.4,
-                  }}
-                >
-                  <span
-                    className={`option-shape ${OPTION_SHAPES[i]}`}
-                    style={{ background: OPTION_TEXT[i], borderBottomColor: OPTION_TEXT[i] }}
-                  />
-                  {opt} · {results.distribution[i]}
-                </motion.div>
-              ))}
+              <span
+                className={`option-shape ${OPTION_SHAPES[results.correctIndex]}`}
+                style={{
+                  background: OPTION_TEXT[results.correctIndex],
+                  borderBottomColor: OPTION_TEXT[results.correctIndex],
+                }}
+              />
+              {results.options[results.correctIndex]}
             </motion.div>
             <h3>Marcador</h3>
             <Leaderboard entries={results.leaderboard} />
